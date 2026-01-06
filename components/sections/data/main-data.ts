@@ -318,7 +318,7 @@ Aurora Chávez Capultitla
   },
   customInvitations:{
     adminPassword: "admin1234",
-    invitationUrl: "https://paola-elizabeth.vercel.app/",
+    invitationUrl: "https://quince-vip-maria-fernanda.vercel.app/",
     suggested_messages: [
   "¡Querida amiga! Te invito a celebrar conmigo el día más mágico de mi vida. ¡Espero verte brillar junto a mí!",
   "¡Familia querida! Este día especial no sería lo mismo sin ustedes. ¡Los espero con mucho amor!",

@@ -12,9 +12,9 @@ export const ADMIN_PASSWORD = customInvitations.adminPassword || "admin123";
 export const EVENT_INFO: EventInfo = {
   partyTitle: hero.subtitle || "Quinceañera de Frida",
   quinceaneraName: hero.name || "Aurora Valentina",
-  date: event.date.full || "Sábado 27 de Diciembre 2025",
-  time: event.ceremony.time || "7:00 PM",
-  venue: event.ceremony.venue || "Capellania de Nuestra Señora de Guadalupe",
+  date: event.date.full || "Sábado 30 de Mayo 2026",
+  time: event.party.time || "6:00 PM",
+  venue: event.party.venue || "Capellania de Nuestra Señora de Guadalupe",
   dressCode: event.dressCode || "Formal - Azul solo la quinceañera -",
   invitationUrl: customInvitations.invitationUrl || "https://quince-vip-new-demo.vercel.app/"
 } as const;

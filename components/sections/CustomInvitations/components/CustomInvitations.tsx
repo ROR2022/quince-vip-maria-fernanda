@@ -157,7 +157,9 @@ const CustomInvitations: React.FC = () => {
                     <strong>🕖 Hora:</strong> {EVENT_INFO.time}
                   </p>
                 </div>
-                <div>
+                <div
+                style={{display:'none'}}
+                >
                   <p>
                     <strong>📍 Lugar:</strong> {EVENT_INFO.venue}
                   </p>

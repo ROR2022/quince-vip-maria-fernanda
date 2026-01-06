@@ -25,7 +25,7 @@ Laura Liset de la Cruz Ovando
 Armando Hernández Mola*/
     parents: {
       father: "Armando Hernández Mola",
-      mother: "Laura Liset de la Cruz Ovando",
+      mother: "Laura Lizette Cruz Ovando",
       message: `Con la Bendicion de Dios y de`,
       backgroundImage: "/images/fondoPaola1.png",
     },

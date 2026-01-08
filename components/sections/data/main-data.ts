@@ -190,7 +190,25 @@ Aurora Chávez Capultitla
     message:
       "Que estés conmigo este día, es lo más importante para nosotros, el obsequio que desees darme, es de tu elección. ¡Sorpréndeme con algo especial!",
     giftsOptions: [
-      
+      {
+        id: "lluviaSobres",
+        name: "Lluvia de Sobres",
+        icon: "💌",
+        description:
+          "Tu presencia es el mejor regalo, pero si deseas contribuir, una lluvia de sobres sería muy apreciada.",
+        image: "/images/gifts/envelope.png",
+        link: "https://example.com/lluvia-de-sobres",
+      },
+      {
+        id: "mesaRegalos",
+        name: "Mesa de Regalos Liverpool",
+        icon: "🎁",
+        description:
+          "Código: 0001958215815 ¡Elige algo que creas que me encantará!",
+        image: "/images/gifts/gift-box.png",
+        link: "https://example.com/mesa-de-regalos",
+      }
+
     ],
   },
   gallery: {
@@ -253,7 +271,36 @@ Aurora Chávez Capultitla
         alt: "Diversión Garantizada",
         caption: "",
       },
-      
+      {
+        id: "image10",
+        src: "/images/marifer10.jpeg",
+        alt: "Diversión Garantizada",
+        caption: "",
+      },
+      {
+        id: "image11",
+        src: "/images/marifer11.jpeg",
+        alt: "Diversión Garantizada",
+        caption: "",
+      },
+      {
+        id: "image12",
+        src: "/images/marifer12.jpeg",
+        alt: "Diversión Garantizada",
+        caption: "",
+      },
+      {
+        id: "image13",
+        src: "/images/marifer13.jpeg",
+        alt: "Diversión Garantizada",
+        caption: "",
+      },
+      {
+        id: "image14",
+        src: "/images/marifer14.jpeg",
+        alt: "Diversión Garantizada",
+        caption: "",
+      }
     ],
     imagesUrls: [
       "/images/rapunzel1.jpeg",

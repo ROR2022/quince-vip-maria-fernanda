@@ -342,6 +342,12 @@ Aurora Chávez Capultitla
         src: "/images/marifer19.jpeg",
         alt: "Diversión Garantizada",
         caption: "",
+      },
+      {
+        id: "image22",
+        src: "/images/marifer22.jpeg",
+        alt: "Diversión Garantizada",
+        caption: "",
       }
     ],
     imagesUrls: [

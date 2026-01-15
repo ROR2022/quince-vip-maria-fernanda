@@ -158,7 +158,7 @@ export default function CeremonySection() {
                     src='/images/marifer24.jpeg'
                     alt="Ceremony Image"
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                   {/* El efecto spotlight se aplica via CSS */}

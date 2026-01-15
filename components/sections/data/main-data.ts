@@ -315,7 +315,7 @@ Aurora Chávez Capultitla
       },
       {
         id: "image17",
-        src: "/images/marifer17.jpeg",
+        src: "/images/marifer24.jpeg",
         alt: "Diversión Garantizada",
         caption: "",
       },
@@ -345,7 +345,7 @@ Aurora Chávez Capultitla
       },
       {
         id: "image22",
-        src: "/images/marifer22.jpeg",
+        src: "/images/marifer23.jpeg",
         alt: "Diversión Garantizada",
         caption: "",
       }

@@ -160,7 +160,7 @@ Aurora Chávez Capultitla
     backgroundImage: "/images/countdown-bg.jpg",
   },
   attendance: {
-    whatsappNumber: "5219931532244", //+52 1 993 153 2244
+    whatsappNumber: "5219931141559", //+52 1 993 153 2244  El número es: 993 114 1559
     title: "CONFIRMACIÓN DE ASISTENCIA",
     message: "Respetuosamente",
     subtitle: "Confirmar antes del evento.",

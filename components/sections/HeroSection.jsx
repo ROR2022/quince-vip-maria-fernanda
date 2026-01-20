@@ -134,7 +134,7 @@ export default function HeroSection() {
         <div className="space-y-2">
           <div className="spotlight-image relative w-full h-96 rounded-full shadow-2xl overflow-hidden mx-auto">
             <Image
-              src="/images/marifer19.jpeg"
+              src="/images/marifer19b.jpeg"
               alt="Ceremony Image"
               fill
               className="object-contain"

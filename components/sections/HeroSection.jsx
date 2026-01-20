@@ -137,7 +137,7 @@ export default function HeroSection() {
               src="/images/marifer19.jpeg"
               alt="Ceremony Image"
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 768px) 100vw, 33vw"
             />
             {/* El efecto spotlight se aplica via CSS */}

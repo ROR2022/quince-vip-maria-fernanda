@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
 import {
   Phone,
@@ -12,7 +13,19 @@ import {
 import { quinceMainData } from "@/components/sections/data/main-data";
 import BackgroundCarrousel from "./BackgroundCarrousel";
 
-const AttendanceConfirmation = () => {
+/**
+ * AttendanceFormContent - Componente de formulario de confirmación de asistencia
+ * 
+ * Características:
+ * - Obtiene datos del invitado desde URL (?guest=ID) para limitar número de personas
+ * - Genera opciones dinámicas en select basado en guestCount del invitado
+ * - Pre-llena el nombre si viene en los datos del guest
+ * - Envía confirmación por WhatsApp y registra en base de datos
+ * - Maneja estados de carga y errores de forma transparente
+ * 
+ * @component
+ */
+const AttendanceFormContent = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
@@ -24,11 +37,70 @@ const AttendanceConfirmation = () => {
     mensaje: "",
   });
   const [showSuccess, setShowSuccess] = useState(false);
+  
+  // Estados para gestión de datos del invitado desde URL
+  const [maxGuestCount, setMaxGuestCount] = useState<number | null>(null);
+  const [guestData, setGuestData] = useState<any>(null);
+  const [isLoadingGuest, setIsLoadingGuest] = useState(false);
+  
+  // Obtener parámetros de URL
+  const searchParams = useSearchParams();
 
   const { attendance } = quinceMainData;
 
   // Número de WhatsApp de destino
   const whatsappNumber = attendance.whatsappNumber;
+
+  // Función para obtener datos del invitado desde la API
+  const fetchGuestData = async (guestId: string) => {
+    setIsLoadingGuest(true);
+    try {
+      const response = await fetch(`/api/guests/${guestId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.data) {
+          const guest = data.data;
+          setGuestData(guest);
+          setMaxGuestCount(guest.guestCount || null);
+          
+          // Pre-llenar nombre si está disponible y el campo está vacío
+          if (guest.name && !formData.nombre) {
+            setFormData(prev => ({ ...prev, nombre: guest.name }));
+          }
+          
+          console.log("✅ Datos del invitado cargados:", {
+            name: guest.name,
+            maxGuests: guest.guestCount
+          });
+        }
+      } else {
+        console.warn("⚠️ Guest no encontrado, usando valores por defecto");
+      }
+    } catch (error) {
+      console.error("❌ Error al obtener datos del invitado:", error);
+    } finally {
+      setIsLoadingGuest(false);
+    }
+  };
+
+  // Obtener datos del invitado si hay parámetro guest en URL
+  useEffect(() => {
+    const guestId = searchParams.get("guest");
+    if (guestId) {
+      fetchGuestData(guestId);
+    }
+  }, [searchParams]);
+
+  // Ajustar número de invitados si excede el máximo permitido
+  useEffect(() => {
+    if (maxGuestCount && formData.numeroInvitados > maxGuestCount) {
+      setFormData(prev => ({ 
+        ...prev, 
+        numeroInvitados: maxGuestCount 
+      }));
+      console.log(`⚠️ Número de invitados ajustado a ${maxGuestCount} (máximo permitido)`);
+    }
+  }, [maxGuestCount]);
 
   // IntersectionObserver para animaciones escalonadas
   useEffect(() => {
@@ -306,6 +378,16 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
 
           {/* Formulario mejorado */}
           <form onSubmit={handleConfirmAttendance} className="space-y-6">
+            {/* Indicador de carga de datos del invitado */}
+            {isLoadingGuest && (
+              <div className="text-center p-4 rounded-2xl mb-6 bg-blue-50 border border-blue-200">
+                <div className="flex items-center justify-center space-x-2 text-blue-600">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                  <p className="text-sm font-medium">Cargando datos de tu invitación...</p>
+                </div>
+              </div>
+            )}
+
             {/* Mensaje de éxito */}
             {showSuccess && (
               <div
@@ -340,7 +422,7 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
                 onChange={handleInputChange}
                 placeholder="Tu nombre completo"
                 required
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoadingGuest}
                 className="w-full text-black pl-12 pr-4 py-4 rounded-2xl border-2 transition-all duration-3000 focus:outline-none focus:ring-0 text-lg placeholder-opacity-60 disabled:opacity-50"
                 style={{
                   background: "rgba(253, 252, 252, 0.8)",
@@ -374,7 +456,7 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
                 value={formData.telefono}
                 onChange={handleInputChange}
                 placeholder="Tu número de teléfono"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoadingGuest}
                 className="w-full text-black pl-12 pr-4 py-4 rounded-2xl border-2 transition-all duration-3000 focus:outline-none focus:ring-0 text-lg placeholder-opacity-60 disabled:opacity-50"
                 style={{
                   background: "rgba(253, 252, 252, 0.8)",
@@ -406,7 +488,7 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
                 name="confirmacion"
                 value={formData.confirmacion}
                 onChange={handleInputChange}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoadingGuest}
                 className="w-full text-black pl-12 pr-4 py-4 rounded-2xl border-2 transition-all duration-3000 focus:outline-none focus:ring-0 text-lg disabled:opacity-50 appearance-none cursor-pointer"
                 style={{
                   background: "rgba(253, 252, 252, 0.8)",
@@ -433,14 +515,14 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
                 ? 'opacity-100 translate-x-0' 
                 : 'opacity-0 translate-x-12'
             }`}>
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <div className="relative top-10 left-5 flex items-center pointer-events-none z-10">
                 <Users className="h-5 w-5 text-aurora-lavanda opacity-70" />
               </div>
               <select
                 name="numeroInvitados"
                 value={formData.numeroInvitados}
                 onChange={handleInputChange}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoadingGuest}
                 className="w-full text-black pl-12 pr-4 py-4 rounded-2xl border-2 transition-all duration-3000 focus:outline-none focus:ring-0 text-lg disabled:opacity-50 appearance-none cursor-pointer"
                 style={{
                   background: "rgba(253, 252, 252, 0.8)",
@@ -456,18 +538,22 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
                   e.target.style.boxShadow = "none";
                 }}
               >
-                <option value={1}>1 persona</option>
-                <option value={2}>2 personas</option>
-                <option value={3}>3 personas</option>
-                <option value={4}>4 personas</option>
-                <option value={5}>5 personas</option>
-                <option value={6}>6 personas</option>
-                <option value={7}>7 personas</option>
-                <option value={8}>8 personas</option>
-                <option value={9}>9 personas</option>
-                <option value={10}>10 personas</option>
-
+                {Array.from(
+                  { length: maxGuestCount || 10 }, 
+                  (_, i) => i + 1
+                ).map((num) => (
+                  <option key={num} value={num}>
+                    {num} {num === 1 ? 'persona' : 'personas'}
+                  </option>
+                ))}
               </select>
+              
+              {/* Mensaje informativo sobre el límite */}
+              {maxGuestCount && maxGuestCount < 10 && (
+                <p className="text-sm text-blue-600 mt-2 text-center bg-blue-50 py-2 px-4 rounded-xl border border-blue-200">
+                  💡 Tu invitación es para máximo <span className="font-semibold">{maxGuestCount}</span> {maxGuestCount === 1 ? 'persona' : 'personas'}
+                </p>
+              )}
             </div>
 
             {/* Campo Mensaje */}
@@ -485,7 +571,7 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
                 onChange={handleInputChange}
                 placeholder="Mensaje especial (opcional)..."
                 rows={4}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoadingGuest}
                 className="w-full text-black pl-12 pr-4 py-4 rounded-2xl border-2 transition-all duration-3000 focus:outline-none focus:ring-0 text-lg placeholder-opacity-60 resize-none disabled:opacity-50"
                 style={{
                   background: "rgba(253, 252, 252, 0.8)",
@@ -513,7 +599,7 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
               <Button
                 size="lg"
                 type="submit"
-                disabled={isSubmitting || showSuccess}
+                disabled={isSubmitting || showSuccess || isLoadingGuest}
                 className="relative overflow-hidden text-white rounded-full py-8 px-8 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-500 text-lg font-semibold group min-w-[200px] disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                 style={{
                   background: showSuccess
@@ -566,4 +652,57 @@ ${formData.mensaje ? `💌 *Mensaje especial:*\n${formData.mensaje}` : ""}
   );
 };
 
-export default AttendanceConfirmation;
+// Componente de loading/fallback para Suspense
+function AttendanceLoading() {
+  return (
+    <section className="relative py-20 px-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="rounded-3xl p-10 shadow-2xl border-2 bg-white/80 relative overflow-hidden">
+          {/* Shimmer effect decorativo */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-aurora-oro to-transparent animate-vip-shimmer-aurora opacity-60"></div>
+          
+          <div className="text-center">
+            <div className="animate-pulse space-y-6">
+              {/* Icono */}
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mx-auto shadow-lg"
+                style={{
+                  background: "linear-gradient(135deg, var(--color-aurora-rosa), var(--color-aurora-lavanda))",
+                }}>
+                <Heart className="w-10 h-10 text-pink-600 opacity-50" />
+              </div>
+              
+              {/* Título */}
+              <div className="h-10 bg-gradient-to-r from-blue-200 to-purple-200 rounded-xl w-3/4 mx-auto"></div>
+              
+              {/* Descripción */}
+              <div className="h-6 bg-gray-200 rounded-lg w-full"></div>
+              <div className="h-6 bg-gray-200 rounded-lg w-5/6 mx-auto"></div>
+              
+              {/* Campos de formulario simulados */}
+              <div className="space-y-4 mt-8">
+                <div className="h-14 bg-gray-100 rounded-2xl w-full"></div>
+                <div className="h-14 bg-gray-100 rounded-2xl w-full"></div>
+                <div className="h-14 bg-gray-100 rounded-2xl w-full"></div>
+              </div>
+            </div>
+            
+            {/* Indicador de carga */}
+            <div className="mt-8 flex items-center justify-center space-x-2 text-blue-600">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+              <span className="text-sm font-medium">Cargando formulario...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Componente principal exportado con Suspense
+export default function AttendanceConfirmation() {
+  return (
+    <Suspense fallback={<AttendanceLoading />}>
+      <AttendanceFormContent />
+    </Suspense>
+  );
+}

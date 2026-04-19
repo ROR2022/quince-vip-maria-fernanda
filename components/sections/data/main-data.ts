@@ -204,7 +204,7 @@ Aurora Chávez Capultitla
         name: "Mesa de Regalos Liverpool",
         icon: "🎁",
         description:
-          "Código: 0001958215815 ¡Elige algo que creas que me encantará!",
+          "Código: 51926583 ¡Elige algo que creas que me encantará!",
         image: "/images/gifts/gift-box.png",
         link: "https://example.com/mesa-de-regalos",
       }
